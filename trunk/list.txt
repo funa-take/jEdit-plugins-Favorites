@@ -1,6 +1,0 @@
-E:\source\java\jEdit\jEdit_plugin\Favorites\src\FavoritesList.java
-E:\source\java\jEdit\jEdit_plugin\Favorites\src\FavoritesPlugin.java
-E:\source\java\jEdit\jEdit_plugin\Favorites\src\FileTreeNode.java
-E:\source\java\jEdit\jEdit_plugin\Favorites\src\FileTreeNodeForHistory.java
-E:\source\java\jEdit\jEdit_plugin\Favorites\src\OptionPanel.java
-E:\source\java\jEdit\jEdit_plugin\Favorites\src\VectorHash.java
