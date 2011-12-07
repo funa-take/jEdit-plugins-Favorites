@@ -1,6 +1,6 @@
 plugin.favorites.FavoritesPlugin.name=Favorites
 plugin.favorites.FavoritesPlugin.author=Funa
-plugin.favorites.FavoritesPlugin.activate=startup
+plugin.favorites.FavoritesPlugin.activate=defer
 plugin.favorites.FavoritesPlugin.version=0.1
 plugin.favorites.FavoritesPlugin.docs=index.html
 

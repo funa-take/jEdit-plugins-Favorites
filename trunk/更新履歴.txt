@@ -1,3 +1,9 @@
+›2011/12/07
+plugin.favorites.FavoritesPlugin.activate=startup
+‚ğ
+plugin.favorites.FavoritesPlugin.activate=defer
+‚Ö•ÏX
+
 ›2011/6/15
 —š—ğ•\¦‚ğ’Ç‰Á
 
