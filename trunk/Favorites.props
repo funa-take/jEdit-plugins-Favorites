@@ -1,0 +1,23 @@
+plugin.favorites.FavoritesPlugin.name=Favorites
+plugin.favorites.FavoritesPlugin.author=Funa
+plugin.favorites.FavoritesPlugin.activate=startup
+plugin.favorites.FavoritesPlugin.version=0.1
+plugin.favorites.FavoritesPlugin.docs=index.html
+
+# Menu bar properties
+plugin.favorites.FavoritesPlugin.menu=favorites.add favorites.addgroup favorites.addbuffers - favorites.delete 
+plugin.favorites.FavoritesPlugin.label=Favorites
+favorites.add.label=Add
+favorites.delete.label=Delete
+favorites.addgroup.label=Add Group
+favorites.addbuffers.label=Add All Buffers
+
+# Dockable window title
+favorites.dock.title=Favorites
+favorites.dock.label=Favorites
+
+# Global Plugin Options
+plugin.favorites.FavoritesPlugin.option-pane=favorites
+options.favorites.label=Favorites
+options.favorites.code=new favorites.OptionPanel()
+
