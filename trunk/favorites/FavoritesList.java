@@ -13,6 +13,7 @@ import java.io.*;
 
 // from jEdit:
 import org.gjt.sp.jedit.*;
+import org.gjt.sp.jedit.browser.VFSBrowser;
 import org.gjt.sp.jedit.gui.*;
 import org.gjt.sp.jedit.io.*;
 import org.gjt.sp.jedit.msg.*;
@@ -124,6 +125,8 @@ public class FavoritesList extends JPanel implements EBComponent, DefaultFocusCo
         String cmd = e.getActionCommand();
         if (cmd.equals("add")){
           FavoritesPlugin.add();
+        } else if (cmd.equals("addParentPath")) {
+          FavoritesPlugin.addParentPath();
         } else if (cmd.equals("addGroup")) {
           FavoritesPlugin.addGroup();
         } else if (cmd.equals("addBuffers")) {
@@ -141,6 +144,10 @@ public class FavoritesList extends JPanel implements EBComponent, DefaultFocusCo
       GUIUtilities.loadIcon("Minus.png"));
     deleteButton.setActionCommand("delete");
     deleteButton.addActionListener(al);
+    RolloverButton addPathButton = new RolloverButton(
+      GUIUtilities.loadIcon("CurrentDir.png"));
+    addPathButton.setActionCommand("addParentPath");
+    addPathButton.addActionListener(al);
     RolloverButton addGroupButton = new RolloverButton(
       GUIUtilities.loadIcon("NewDir.png"));
     addGroupButton.setActionCommand("addGroup");
@@ -154,6 +161,7 @@ public class FavoritesList extends JPanel implements EBComponent, DefaultFocusCo
     panel.add(leftPanel, BorderLayout.WEST);
     leftPanel.add(addButton);
     leftPanel.add(deleteButton);
+    leftPanel.add(addPathButton);
     leftPanel.add(addGroupButton);
     leftPanel.add(addBuffersButton);
     
@@ -192,7 +200,11 @@ public class FavoritesList extends JPanel implements EBComponent, DefaultFocusCo
     for (int i = 0; i < tp.length; i++) {
       FileTreeNode node = (FileTreeNode)(tp[i].getPathComponent(tp[i].getPathCount() - 1));
       if (node.isLeaf()) {
-        jEdit.openFile(view, node.getPath());
+        if (FileTreeNode.TYPE_DIRECTORY.equals(node.getType())){
+          VFSBrowser.browseDirectory(view,node.getPath());
+        } else {
+          jEdit.openFile(view, node.getPath());
+        }
       }
     }
   }
@@ -250,6 +262,22 @@ public class FavoritesList extends JPanel implements EBComponent, DefaultFocusCo
       FavoritesList.reloadAll(node);
     }
     
+  }
+  
+  public void addParentPath() {
+    FileTreeNode node = (FileTreeNode)tree.getLastSelectedPathComponent();
+    if (node == null) {
+      node = root;
+    }
+    if (node.isLeaf()) {
+      node = (FileTreeNode)node.getParent();
+    }
+    String path = view.getBuffer().getPath();
+    path = MiscUtilities.getParentOfPath(path);
+    
+    if (node.addPathNode(path)){
+      FavoritesList.reloadAll(node);
+    }
   }
   
   public void add() {

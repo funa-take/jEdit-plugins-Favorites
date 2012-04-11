@@ -16,12 +16,21 @@ public class FileTreeNode implements TreeNode, Comparable,Cloneable {
   private boolean leaf; // 自身が葉であるか
   private TreeNode parent; // 親ノード
   
-  public FileTreeNode(String name, String path) {
+  public static String TYPE_FILE = "File";
+  public static String TYPE_DIRECTORY = "Directory";
+  private String type; //種類：FileとかDirectoryとか
+  
+  public FileTreeNode(String name, String path, String type) {
     children = new VectorHash();
     // hash = new HashMap();
     this.name = name;
     this.path = path.replace('\\','/');
+    this.type = type;
     leaf = true;
+  }
+  
+  public FileTreeNode(String name, String path) {
+    this(name,path,TYPE_FILE);
   }
   
   public FileTreeNode(String name) {
@@ -67,6 +76,10 @@ public class FileTreeNode implements TreeNode, Comparable,Cloneable {
   
   public boolean add(Buffer buffer){
     return this.add(new FileTreeNode(buffer.getName(), buffer.getPath()));
+  }
+  
+  public boolean addPathNode(String path){
+    return this.add(new FileTreeNode("", path, TYPE_DIRECTORY));
   }
   
   public void delete(FileTreeNode node){
@@ -158,6 +171,10 @@ public class FileTreeNode implements TreeNode, Comparable,Cloneable {
     this.name = name;
   }
   
+  public String getType(){
+    return type;
+  }
+  
   public int compareTo(Object o){
     if (!(o instanceof FileTreeNode)){
       return 0;
@@ -171,12 +188,20 @@ public class FileTreeNode implements TreeNode, Comparable,Cloneable {
       return -1;
     }
     
+    if (TYPE_DIRECTORY.equals(getType()) && !TYPE_DIRECTORY.equals(node.getType())){
+      return -1;
+    }
+    
+    if (!TYPE_DIRECTORY.equals(getType()) && TYPE_DIRECTORY.equals(node.getType())){
+      return 1;
+    }
+    
     // if (isLeaf()){
     // return getPath().compareToIgnoreCase(node.toString());
     // }
     
     // if (!isLeaf()){
-    return getName().compareToIgnoreCase(node.toString());
+    return toString().compareToIgnoreCase(node.toString());
     // }
     
     // return 0;

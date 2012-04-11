@@ -13,12 +13,17 @@
             favorites.FavoritesPlugin.delete();
         </CODE>
     </ACTION>
-    <ACTION NAME="favorites.addgroup">
+    <ACTION NAME="favorites.addGroup">
         <CODE>
             favorites.FavoritesPlugin.addGroup();
         </CODE>
     </ACTION>
-    <ACTION NAME="favorites.addbuffers">
+    <ACTION NAME="favorites.addParentPath">
+        <CODE>
+            favorites.FavoritesPlugin.addParentPath();
+        </CODE>
+    </ACTION>
+    <ACTION NAME="favorites.addBuffers">
         <CODE>
             favorites.FavoritesPlugin.addBuffers();
         </CODE>

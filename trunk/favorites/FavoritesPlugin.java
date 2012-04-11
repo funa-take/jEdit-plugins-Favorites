@@ -104,6 +104,15 @@ public class FavoritesPlugin extends EBPlugin {
     }
   }
   
+  public static void addParentPath(){
+    View view = jEdit.getActiveView();
+    FavoritesList cur = FavoritesList.getFavoritesList(view);
+    if (cur != null){
+      cur.addParentPath();
+      saveXML();
+    }
+  }
+  
   public static void delete(){
     View view = jEdit.getActiveView();
     FavoritesList cur = FavoritesList.getFavoritesList(view);
@@ -255,6 +264,8 @@ public class FavoritesPlugin extends EBPlugin {
           bw.write(path);
           bw.write("\"  name=\"");
           bw.write(el.getName());
+          bw.write("\"  type=\"");
+          bw.write(el.getType());
           bw.write("\"/>");
           bw.newLine();
           // bw.write("  </FILE>");
@@ -304,7 +315,12 @@ public class FavoritesPlugin extends EBPlugin {
           return;
         }
         
-        FileTreeNode newNode = new FileTreeNode(name,path);
+        String type = attributes.getValue("type");
+        if (type == null){
+          type = FileTreeNode.TYPE_FILE;
+        }
+        
+        FileTreeNode newNode = new FileTreeNode(name,path,type);
         if (node != null){
           node.add(newNode);
         }
