@@ -32,6 +32,7 @@ public class FavoritesList extends JPanel implements EBComponent, DefaultFocusCo
   private JScrollPane scroller = null;
   private static Hashtable hash = new Hashtable();
   
+  
   public FavoritesList( final View view ) {
     super( new BorderLayout() );
     this.view = view;
@@ -114,9 +115,24 @@ public class FavoritesList extends JPanel implements EBComponent, DefaultFocusCo
     tree.addKeyListener(kl);
     tree.addMouseListener(ml);
     tree.addTreeSelectionListener(tsl);
-    
     tree.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.CTRL_MASK), "none");
     // tree.getInputMap().put(KeyStroke.getKeyStroke("control A"), "none");
+    tree.setCellRenderer(
+      new DefaultTreeCellRenderer(){
+        public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus){
+          Component c = super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
+          
+          if (leaf && value instanceof FileTreeNode && c instanceof JLabel){
+            JLabel label = (JLabel)c;
+            FileTreeNode node = (FileTreeNode)value;
+            if (FileTreeNode.TYPE_DIRECTORY.equals(node.getType())){
+              label.setIcon(GUIUtilities.loadIcon("Folder.png"));
+            }
+          }
+          return c;
+        }
+        
+      });
     
     scroller = new JScrollPane( tree );
     
@@ -171,6 +187,7 @@ public class FavoritesList extends JPanel implements EBComponent, DefaultFocusCo
     hash.put(view, this);
   }
   
+  
   public void handleMessage( EBMessage message ) {
     if ( message instanceof BufferUpdate ) {
       // BufferUpdate msg = ( BufferUpdate ) message;
@@ -194,6 +211,7 @@ public class FavoritesList extends JPanel implements EBComponent, DefaultFocusCo
     }
   }
   
+  
   public void selectNode() {
     TreeSelectionModel selmodel = tree.getSelectionModel();
     TreePath[] tp = selmodel.getSelectionPaths();
@@ -214,9 +232,11 @@ public class FavoritesList extends JPanel implements EBComponent, DefaultFocusCo
     treeModel.reload();
   }
   
+  
   public void reload(FileTreeNode node){
     treeModel.reload(node);
   }
+  
   
   public static void reloadAll(){
     Enumeration element = hash.elements();
@@ -224,6 +244,7 @@ public class FavoritesList extends JPanel implements EBComponent, DefaultFocusCo
       ((FavoritesList)element.nextElement()).reload();
     }
   }
+  
   
   public static void reloadAll(FileTreeNode node){
     Enumeration element = hash.elements();
@@ -233,14 +254,15 @@ public class FavoritesList extends JPanel implements EBComponent, DefaultFocusCo
   }
   
   
-  
   public static FavoritesList getFavoritesList(View view) {
     return (FavoritesList)hash.get(view);
+    
   }
   
   public static FavoritesList removeFavoritesList(View view) {
     return (FavoritesList)hash.remove(view);
   }
+  
   
   public void addGroup() {
     // String[] msg = {"Input group name", "a","b"};
@@ -257,12 +279,33 @@ public class FavoritesList extends JPanel implements EBComponent, DefaultFocusCo
     if (node.isLeaf()) {
       node = (FileTreeNode)node.getParent();
     }
-    if (node.add(new FileTreeNode(gname))){
+    if (node.addNode(new FileTreeNode(gname))){
       // treeModel.reload(node);
       FavoritesList.reloadAll(node);
     }
     
   }
+  
+  
+  public void addPath() {
+    String path = JOptionPane.showInputDialog(view, "Input Path", "Add Path", JOptionPane.QUESTION_MESSAGE); 
+    if (path == null || path.equals("")) {
+      return;
+    }
+    
+    FileTreeNode node = (FileTreeNode)tree.getLastSelectedPathComponent();
+    if (node == null) {
+      node = root;
+    }
+    if (node.isLeaf()) {
+      node = (FileTreeNode)node.getParent();
+    }
+    
+    if (node.addNode(path,FileTreeNode.TYPE_DIRECTORY)){
+      FavoritesList.reloadAll(node);
+    }
+  }
+  
   
   public void addParentPath() {
     FileTreeNode node = (FileTreeNode)tree.getLastSelectedPathComponent();
@@ -275,10 +318,11 @@ public class FavoritesList extends JPanel implements EBComponent, DefaultFocusCo
     String path = view.getBuffer().getPath();
     path = MiscUtilities.getParentOfPath(path);
     
-    if (node.addPathNode(path)){
+    if (node.addNode(path,FileTreeNode.TYPE_DIRECTORY)){
       FavoritesList.reloadAll(node);
     }
   }
+  
   
   public void add() {
     // System.out.println("add");
@@ -289,12 +333,13 @@ public class FavoritesList extends JPanel implements EBComponent, DefaultFocusCo
     if (node.isLeaf()) {
       node = (FileTreeNode)node.getParent();
     }
-    if (node.add(view.getBuffer())){
+    if (node.addNode(view.getBuffer())){
       // treeModel.reload(node);
       FavoritesList.reloadAll(node);
     }
     
   }
+  
   
   public void addBuffers() {
     // System.out.println("add");
@@ -308,7 +353,7 @@ public class FavoritesList extends JPanel implements EBComponent, DefaultFocusCo
     Buffer[] buffers = jEdit.getBuffers();
     boolean result = false;
     for (int i = 0; i < buffers.length; i++) {
-      result |= node.add(buffers[i]);
+      result |= node.addNode(buffers[i]);
     }
     if (result) {
       // treeModel.reload(node);
@@ -316,6 +361,7 @@ public class FavoritesList extends JPanel implements EBComponent, DefaultFocusCo
     }
     
   }
+  
   
   public void rename(){
     FileTreeNode node = (FileTreeNode)tree.getLastSelectedPathComponent();
@@ -339,6 +385,7 @@ public class FavoritesList extends JPanel implements EBComponent, DefaultFocusCo
     }
   }
   
+  
   public void delete() {
     // System.out.println("delete");
     if (JOptionPane.showConfirmDialog(view,"Do you want to delete?","Delete favorites", JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) {
@@ -357,7 +404,7 @@ public class FavoritesList extends JPanel implements EBComponent, DefaultFocusCo
         continue;
       }
       
-      parent.delete(node);
+      parent.deleteNode(node);
     }
     if (tp.length == 1 && parent != null) {
       // treeModel.reload(parent);
@@ -372,15 +419,18 @@ public class FavoritesList extends JPanel implements EBComponent, DefaultFocusCo
     }
   }
   
+  
   public void focusOnDefaultComponent() {
     if (tree != null) {
       tree.requestFocus();
     }
   }
   
+  
   public FileTreeNode getRoot() {
     return root;
   }
+  
   
   public FileTreeNode getHistory() {
     return (FileTreeNode)root.getChild(FavoritesPlugin.getHistoryKey());

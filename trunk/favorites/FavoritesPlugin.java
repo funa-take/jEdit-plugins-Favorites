@@ -79,9 +79,9 @@ public class FavoritesPlugin extends EBPlugin {
           FileTreeNode history = cur.getHistory();
           boolean reloadAll = (history == null);
           
-          root.delete(history);
+          root.deleteNode(history);
           history = loadHistory();
-          root.add(history);
+          root.addNode(history);
           if (reloadAll){
             FavoritesList.reloadAll();
           } else {
@@ -104,6 +104,16 @@ public class FavoritesPlugin extends EBPlugin {
     }
   }
   
+  public static void addPath(){
+    View view = jEdit.getActiveView();
+    FavoritesList cur = FavoritesList.getFavoritesList(view);
+    if (cur != null){
+      cur.addPath();
+      saveXML();
+    }
+  }
+  
+  
   public static void addParentPath(){
     View view = jEdit.getActiveView();
     FavoritesList cur = FavoritesList.getFavoritesList(view);
@@ -112,6 +122,7 @@ public class FavoritesPlugin extends EBPlugin {
       saveXML();
     }
   }
+  
   
   public static void delete(){
     View view = jEdit.getActiveView();
@@ -150,7 +161,7 @@ public class FavoritesPlugin extends EBPlugin {
     int historyOrder = 0;
     while(it.hasNext()){
       entry = (BufferHistory.Entry)it.next();
-      root.add(new FileTreeNodeForHistory(MiscUtilities.getFileName(entry.path), entry.path, historyOrder++));
+      root.addNode(new FileTreeNodeForHistory(MiscUtilities.getFileName(entry.path), entry.path, historyOrder++));
     }
     return root;
   }
@@ -160,7 +171,7 @@ public class FavoritesPlugin extends EBPlugin {
     if (root == null){
       root = new FileTreeNode("root");
     }
-    root.add(loadHistory());
+    root.addNode(loadHistory());
     return root;
   }
   
@@ -209,7 +220,7 @@ public class FavoritesPlugin extends EBPlugin {
       return;
     }
     FileTreeNode root = (FileTreeNode)cur.getRoot().clone();
-    root.delete(cur.getHistory());
+    root.deleteNode(cur.getHistory());
     
     String settingPath = MiscUtilities.constructPath(jEdit.getSettingsDirectory(), "favorites");
     BufferedWriter bw = null;
@@ -302,7 +313,7 @@ public class FavoritesPlugin extends EBPlugin {
         }
         FileTreeNode newNode = new FileTreeNode(name);
         if (node != null){
-          node.add(newNode);
+          node.addNode(newNode);
         }
         node = newNode;
       } else if ("FILE".equals(qName)){
@@ -322,7 +333,7 @@ public class FavoritesPlugin extends EBPlugin {
         
         FileTreeNode newNode = new FileTreeNode(name,path,type);
         if (node != null){
-          node.add(newNode);
+          node.addNode(newNode);
         }
       }
     }

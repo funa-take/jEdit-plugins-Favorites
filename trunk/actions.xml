@@ -23,6 +23,11 @@
             favorites.FavoritesPlugin.addParentPath();
         </CODE>
     </ACTION>
+    <ACTION NAME="favorites.addPath">
+        <CODE>
+            favorites.FavoritesPlugin.addPath();
+        </CODE>
+    </ACTION>
     <ACTION NAME="favorites.addBuffers">
         <CODE>
             favorites.FavoritesPlugin.addBuffers();

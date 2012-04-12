@@ -5,12 +5,13 @@ plugin.favorites.FavoritesPlugin.version=0.2
 plugin.favorites.FavoritesPlugin.docs=index.html
 
 # Menu bar properties
-plugin.favorites.FavoritesPlugin.menu=favorites.add favorites.addGroup favorites.addParentPath favorites.addBuffers - favorites.delete 
+plugin.favorites.FavoritesPlugin.menu=favorites.add favorites.addGroup favorites.addPath favorites.addParentPath favorites.addBuffers - favorites.delete 
 plugin.favorites.FavoritesPlugin.label=Favorites
 favorites.add.label=Add
 favorites.delete.label=Delete
 favorites.addGroup.label=Add Group
 favorites.addParentPath.label=Add Parent Path
+favorites.addPath.label=Add Path
 favorites.addBuffers.label=Add All Buffers
 
 # Dockable window title
