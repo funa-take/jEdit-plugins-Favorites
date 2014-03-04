@@ -25,7 +25,10 @@ import javax.swing.SwingUtilities;
 public class FavoritesPlugin extends EBPlugin {
   
   private FavoritesList lastList = null;
+  private static File pluginHomePath = null;
+  
   public FavoritesPlugin(){
+    pluginHomePath = getPluginHome();
   }
   
   public void handleMessage( EBMessage msg ) {
@@ -176,11 +179,14 @@ public class FavoritesPlugin extends EBPlugin {
   }
   
   private static FileTreeNode loadXML(){
-    String settingPath = MiscUtilities.constructPath(jEdit.getSettingsDirectory(), "favorites");
     FileTreeNode root = null;
     File file = null;
+    
+    if (pluginHomePath == null){
+      return root;
+    }
     try {
-      file = new File(settingPath,"favorites.xml");
+      file = new File(pluginHomePath,"favorites.xml");
       if (!file.exists()) {
         return root;
       }
@@ -216,20 +222,22 @@ public class FavoritesPlugin extends EBPlugin {
   }
   
   private static void saveXML(FavoritesList cur){
+    if (pluginHomePath == null){
+      return;
+    }
+    
     if (cur == null ){
       return;
     }
     FileTreeNode root = (FileTreeNode)cur.getRoot().clone();
     root.deleteNode(cur.getHistory());
     
-    String settingPath = MiscUtilities.constructPath(jEdit.getSettingsDirectory(), "favorites");
     BufferedWriter bw = null;
     try {
-      File file = new File(settingPath);
-      if (!file.exists()){
-        file.mkdirs();
+      if (!pluginHomePath.exists()){
+        pluginHomePath.mkdirs();
       }
-      bw = new BufferedWriter(new OutputStreamWriter( new FileOutputStream(new File(settingPath,"favorites.xml")),"UTF-8"));
+      bw = new BufferedWriter(new OutputStreamWriter( new FileOutputStream(new File(pluginHomePath,"favorites.xml")),"UTF-8"));
     } catch (Exception e){
       Log.log(Log.ERROR, FavoritesPlugin.class, e);
       return;
