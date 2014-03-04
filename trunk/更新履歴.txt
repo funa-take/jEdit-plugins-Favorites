@@ -1,3 +1,6 @@
+○2014/03/04
+設定ファイルのパスをgetPluginHomeで取得するように修正
+
 ○2011/12/07
 plugin.favorites.FavoritesPlugin.activate=startup
 を
