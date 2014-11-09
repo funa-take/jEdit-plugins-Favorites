@@ -47,7 +47,7 @@ public class FileTreeNodeTransferHandler extends TransferHandler {
       // System.out.println("import");
       JTree tree = (JTree)c;
       TreePath path = tree.getDropLocation().getPath();
-      FileTreeNode parent = (FileTreeNode)path.getLastPathComponent();
+      final FileTreeNode parent = (FileTreeNode)path.getLastPathComponent();
       
       // 葉にはドロップしない
       if (parent.isLeaf()){
@@ -77,10 +77,19 @@ public class FileTreeNodeTransferHandler extends TransferHandler {
         }
         
         // parent.addNode((FileTreeNode)node.clone());
-        FileTreeNode oldParent = (FileTreeNode)node.getParent();
+        final FileTreeNode oldParent = (FileTreeNode)node.getParent();
         parent.addNode(node);
-        FavoritesList.reloadAll(parent);
-        FavoritesList.reloadAll(oldParent);
+        
+        // リロードは遅延処理する
+        SwingUtilities.invokeLater(new Runnable(){
+            public void run(){
+              FavoritesList.reloadAll(oldParent);
+              FavoritesList.reloadAll(parent);
+            }
+        });
+        
+        
+        // FavoritesList.reloadAll();
       }
       return true;
     } catch (UnsupportedFlavorException ex) {
@@ -97,17 +106,17 @@ public class FileTreeNodeTransferHandler extends TransferHandler {
     
     super.exportDone(source, t, action);
     // try {
-      // JTree tree = (JTree)source;
-      // if (action == MOVE) {
-        // for (DataFlavor df : t.getTransferDataFlavors()) {
-          // FileTreeNode node = (FileTreeNode)t.getTransferData(df);
-          // FileTreeNode parent = (FileTreeNode)node.getParent();
-          // parent.deleteNode(node);
-          // FavoritesList.reloadAll(parent);
-        // }
-      // } else {
-        // super.exportDone(source, t, action);
-      // }
+    // JTree tree = (JTree)source;
+    // if (action == MOVE) {
+    // for (DataFlavor df : t.getTransferDataFlavors()) {
+    // FileTreeNode node = (FileTreeNode)t.getTransferData(df);
+    // FileTreeNode parent = (FileTreeNode)node.getParent();
+    // parent.deleteNode(node);
+    // FavoritesList.reloadAll(parent);
+    // }
+    // } else {
+    // super.exportDone(source, t, action);
+    // }
     // } catch (UnsupportedFlavorException ex) {
     // } catch (IOException ex) {
     // }
