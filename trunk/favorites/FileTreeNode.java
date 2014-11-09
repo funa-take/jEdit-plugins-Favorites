@@ -10,15 +10,15 @@ public class FileTreeNode implements TreeNode, Comparable, Cloneable {
   
   private String name;
   private String path;
-  // private Vector children; // qƒm[ƒh‚Ì”z—ñ
-  // private HashMap hash; // ¬ƒm[ƒh‚ÌƒnƒbƒVƒ…
-  private VectorHash children; // qƒm[ƒh‚ÌVectorHash
-  private boolean leaf; // ©g‚ª—t‚Å‚ ‚é‚©
-  private TreeNode parent; // eƒm[ƒh
+  // private Vector children; // å­ãƒãƒ¼ãƒ‰ã®é…åˆ—
+  // private HashMap hash; // å°ãƒãƒ¼ãƒ‰ã®ãƒãƒƒã‚·ãƒ¥
+  private VectorHash children; // å­ãƒãƒ¼ãƒ‰ã®VectorHash
+  private boolean leaf; // è‡ªèº«ãŒè‘‰ã§ã‚ã‚‹ã‹
+  private TreeNode parent; // è¦ªãƒãƒ¼ãƒ‰
   
   public static String TYPE_FILE = "File";
   public static String TYPE_DIRECTORY = "Directory";
-  private String type; //í—ŞFFile‚Æ‚©Directory‚Æ‚©
+  private String type; //ç¨®é¡ï¼šFileã¨ã‹Directoryã¨ã‹
   
   
   public FileTreeNode(String name, String path, String type) {
@@ -26,8 +26,8 @@ public class FileTreeNode implements TreeNode, Comparable, Cloneable {
     // hash = new HashMap();
     this.name = name;
     this.path = path.replace('\\', '/');
-      this.type = type;
-      leaf = true;
+    this.type = type;
+    leaf = true;
   }
   
   
@@ -67,6 +67,12 @@ public class FileTreeNode implements TreeNode, Comparable, Cloneable {
       return false;
     }
     
+    // ã‚‚ã—ä»–ã®è¦ªã«å±ã—ã¦ã„ã‚‹å ´åˆã¯ã€å¤ã„è¦ªã‹ã‚‰æŠœã‘ã‚‹
+    FileTreeNode oldParent = (FileTreeNode)node.getParent();
+    if (oldParent != null && !oldParent.equals(this)){
+      oldParent.deleteNode(node);
+    }
+    
     node.setParent(this);
     int index = 0;
     for (index = 0; index < children.size(); index++) {
@@ -104,36 +110,36 @@ public class FileTreeNode implements TreeNode, Comparable, Cloneable {
   }
   
   
-  //TreeNodeƒƒ\ƒbƒh‚ÌÀ‘•
-  //qƒm[ƒh‚ÉƒAƒNƒZƒX‚·‚é‚½‚ß‚ÌEnumeration‚ğ•Ô‚·
+  //TreeNodeãƒ¡ã‚½ãƒƒãƒ‰ã®å®Ÿè£…
+  //å­ãƒãƒ¼ãƒ‰ã«ã‚¢ã‚¯ã‚»ã‚¹ã™ã‚‹ãŸã‚ã®Enumerationã‚’è¿”ã™
   @Override
   public Enumeration children() {
     return children.elements();
   }
   
   
-  //qƒm[ƒh‚ÉƒAƒNƒZƒX‚Å‚«‚é‚©‚Ç‚¤‚©‚ğ•Ô‚·
+  //å­ãƒãƒ¼ãƒ‰ã«ã‚¢ã‚¯ã‚»ã‚¹ã§ãã‚‹ã‹ã©ã†ã‹ã‚’è¿”ã™
   @Override
   public boolean getAllowsChildren() {
     return !leaf;
   }
   
   
-  //ƒCƒ“ƒfƒbƒNƒX”Ô–Ú‚Ìqƒm[ƒh‚ğ•Ô‚·
+  //ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ç•ªç›®ã®å­ãƒãƒ¼ãƒ‰ã‚’è¿”ã™
   @Override
   public TreeNode getChildAt(int index) {
     return (TreeNode)children.get(index);
   }
   
   
-  //qƒm[ƒh‚Ì”‚ğ•Ô‚·
+  //å­ãƒãƒ¼ãƒ‰ã®æ•°ã‚’è¿”ã™
   @Override
   public int getChildCount() {
     return children.size();
   }
   
   
-  //ˆø”‚Ìqƒm[ƒh‚ª‰½”Ô–Ú‚È‚Ì‚©‚ğ•Ô‚·
+  //å¼•æ•°ã®å­ãƒãƒ¼ãƒ‰ãŒä½•ç•ªç›®ãªã®ã‹ã‚’è¿”ã™
   public int getIndex(TreeNode node) {
     if (!(node instanceof FileTreeNode)) {
       return -1;
@@ -142,13 +148,33 @@ public class FileTreeNode implements TreeNode, Comparable, Cloneable {
   }
   
   
-  //qƒm[ƒh‚ğ•Ô‚·
+  //å­ãƒãƒ¼ãƒ‰ã‚’è¿”ã™
   public TreeNode getChild(Object key) {
     return (TreeNode)children.get(key);
   }
   
+  public boolean containsChild(TreeNode node){
+    if (!(node instanceof FileTreeNode)) {
+      return false;
+    }
+    return children.containsKey(((FileTreeNode)node).getKey());
+  }
   
-  //eƒm[ƒh‚ğ•Ô‚·
+  
+  // æŒ‡å®šã•ã‚ŒãŸãƒãƒ¼ãƒ‰ãŒè¦ªã¨ã—ã¦å­˜åœ¨ã—ã¦ã„ã‚‹ã‹å†å¸°çš„ã«æ¢ã™
+  public boolean findParent(FileTreeNode node){
+    TreeNode current = this;
+    while( current != null ){
+      if (current.equals(node)){
+        return true;
+      }
+      current = current.getParent();
+    }
+    return false;
+  }
+  
+  
+  //è¦ªãƒãƒ¼ãƒ‰ã‚’è¿”ã™
   @Override
   public TreeNode getParent() {
     if (parent != null) {
@@ -159,7 +185,7 @@ public class FileTreeNode implements TreeNode, Comparable, Cloneable {
   }
   
   
-  //—t‚Å‚ ‚é‚©‚Ç‚¤‚©‚ğ•Ô‚·
+  //è‘‰ã§ã‚ã‚‹ã‹ã©ã†ã‹ã‚’è¿”ã™
   @Override
   public boolean isLeaf() {
     return leaf;
@@ -241,10 +267,10 @@ public class FileTreeNode implements TreeNode, Comparable, Cloneable {
   
   
   /**
-  * FileTreeNode ‚ğƒRƒs[‚µ‚Ü‚·B
-  * ƒRƒs[‚Íq”z—ñ‚Ì•¡»‚ğQÆ‚µ‚Ü‚·B
+  * FileTreeNode ã‚’ã‚³ãƒ”ãƒ¼ã—ã¾ã™ã€‚
+  * ã‚³ãƒ”ãƒ¼ã¯å­é…åˆ—ã®è¤‡è£½ã‚’å‚ç…§ã—ã¾ã™ã€‚
   * 
-  *@return    VectorHash ‚ÌƒRƒs[
+  *@return    VectorHash ã®ã‚³ãƒ”ãƒ¼
   */
   @Override
   public Object clone() {

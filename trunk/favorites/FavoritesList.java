@@ -20,8 +20,8 @@ import org.gjt.sp.jedit.msg.*;
 import org.gjt.sp.util.Log;
 
 /**
-* ƒcƒŠ[‚ğ•\¦‚·‚éƒpƒlƒ‹B
-* ƒcƒŠ[‚É•\¦‚·‚éƒm[ƒh‚ÍA•¡”‚Ì FavoritesList ‚Å‹¤—L‚³‚ê‚éB
+* ãƒ„ãƒªãƒ¼ã‚’è¡¨ç¤ºã™ã‚‹ãƒ‘ãƒãƒ«ã€‚
+* ãƒ„ãƒªãƒ¼ã«è¡¨ç¤ºã™ã‚‹ãƒãƒ¼ãƒ‰ã¯ã€è¤‡æ•°ã® FavoritesList ã§å…±æœ‰ã•ã‚Œã‚‹ã€‚
 */
 public class FavoritesList extends JPanel implements EBComponent, DefaultFocusComponent {
   
@@ -112,6 +112,10 @@ public class FavoritesList extends JPanel implements EBComponent, DefaultFocusCo
     
     treeModel = new DefaultTreeModel(root);
     tree = new JTree(treeModel);
+    // drag and drop ã‚’æœ‰åŠ¹ã«ã™ã‚‹
+    tree.setDragEnabled(true);
+    tree.setTransferHandler(new FileTreeNodeTransferHandler());
+    
     tree.addKeyListener(kl);
     tree.addMouseListener(ml);
     tree.addTreeSelectionListener(tsl);

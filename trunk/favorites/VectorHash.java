@@ -106,10 +106,10 @@ public class VectorHash implements Cloneable {
   
   
   /**
-  * VectorHash ���R�s�[���܂��B
-  * �R�s�[�͓����f�[�^�z��̕������Q�Ƃ��܂��B
+  * VectorHash をコピーします。
+  * コピーは内部データ配列の複製を参照します。
   * 
-  *@return    VectorHash �̃R�s�[
+  *@return    VectorHash のコピー
   */
   public Object clone()  {
     try {
