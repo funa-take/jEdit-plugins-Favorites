@@ -1,0 +1,22 @@
+○2016/12/10
+設定ファイルをバックアップするように修正
+
+○2014/11/09
+ツリーをドラッグ＆ドロップで編集可能に修正
+
+○2014/03/04
+設定ファイルのパスをgetPluginHomeで取得するように修正
+
+○2011/12/07
+plugin.favorites.FavoritesPlugin.activate=startup
+を
+plugin.favorites.FavoritesPlugin.activate=defer
+へ変更
+
+○2011/6/15
+履歴表示を追加
+
+○2010/12/15
+XMLの読込ライブラリを標準のものに変更
+
+○2010/3/14 作成
