@@ -25,10 +25,19 @@ import javax.swing.SwingUtilities;
 public class FavoritesPlugin extends EBPlugin {
   
   private FavoritesList lastList = null;
-  private static File pluginHomePath = null;
+  private static String settingsFile = "favorites.xml";
+  private static File settingsPath = null;
+  private static File settingsDir = null;
   
   public FavoritesPlugin(){
-    pluginHomePath = getPluginHome();
+    settingsPath = null;
+    settingsDir = null;
+    File pluginHomePath = getPluginHome();
+    if (pluginHomePath == null) {
+      return;
+    }
+    settingsPath = new File(pluginHomePath, settingsFile);
+    settingsDir = settingsPath.getParentFile();
   }
   
   public void handleMessage( EBMessage msg ) {
@@ -46,7 +55,7 @@ public class FavoritesPlugin extends EBPlugin {
         if (bmsg.getView() == null){
           return;
         }
-        // ƒoƒbƒtƒ@‚ğ•Â‚¶‚½‚çA—š—ğ‚ğƒŠƒ[ƒh‚·‚é
+        // ãƒãƒƒãƒ•ã‚¡ã‚’é–‰ã˜ãŸã‚‰ã€å±¥æ­´ã‚’ãƒªãƒ­ãƒ¼ãƒ‰ã™ã‚‹
         reloadHistory(bmsg.getView());
       }
     }
@@ -182,11 +191,11 @@ public class FavoritesPlugin extends EBPlugin {
     FileTreeNode root = null;
     File file = null;
     
-    if (pluginHomePath == null){
+    if (settingsPath == null){
       return root;
     }
     try {
-      file = new File(pluginHomePath,"favorites.xml");
+      file = settingsPath;
       if (!file.exists()) {
         return root;
       }
@@ -196,11 +205,11 @@ public class FavoritesPlugin extends EBPlugin {
     }
     
     try {
-      // SAXƒp[ƒT[ƒtƒ@ƒNƒgƒŠ‚ğ¶¬
+      // SAXãƒ‘ãƒ¼ã‚µãƒ¼ãƒ•ã‚¡ã‚¯ãƒˆãƒªã‚’ç”Ÿæˆ
       SAXParserFactory spfactory = SAXParserFactory.newInstance();
-      // SAXƒp[ƒT[‚ğ¶¬
+      // SAXãƒ‘ãƒ¼ã‚µãƒ¼ã‚’ç”Ÿæˆ
       SAXParser parser = spfactory.newSAXParser();
-      // XMLƒtƒ@ƒCƒ‹‚ğw’è‚³‚ê‚½ƒfƒtƒHƒ‹ƒgƒnƒ“ƒhƒ‰[‚Åˆ—‚µ‚Ü‚·
+      // XMLãƒ•ã‚¡ã‚¤ãƒ«ã‚’æŒ‡å®šã•ã‚ŒãŸãƒ‡ãƒ•ã‚©ãƒ«ãƒˆãƒãƒ³ãƒ‰ãƒ©ãƒ¼ã§å‡¦ç†ã—ã¾ã™
       FavoritesXmlHandler handler = new FavoritesXmlHandler();
       parser.parse(file, handler);
       root = handler.getRoot();
@@ -222,7 +231,7 @@ public class FavoritesPlugin extends EBPlugin {
   }
   
   private static void saveXML(FavoritesList cur){
-    if (pluginHomePath == null){
+    if (settingsDir == null || settingsPath == null){
       return;
     }
     
@@ -234,10 +243,13 @@ public class FavoritesPlugin extends EBPlugin {
     
     BufferedWriter bw = null;
     try {
-      if (!pluginHomePath.exists()){
-        pluginHomePath.mkdirs();
+      if (!settingsDir.exists()){
+        if (!settingsDir.mkdirs()) {
+          return;
+        }
       }
-      bw = new BufferedWriter(new OutputStreamWriter( new FileOutputStream(new File(pluginHomePath,"favorites.xml")),"UTF-8"));
+      MiscUtilities.saveBackup(settingsPath);
+      bw = new BufferedWriter(new OutputStreamWriter( new FileOutputStream(settingsPath),"UTF-8"));
     } catch (Exception e){
       Log.log(Log.ERROR, FavoritesPlugin.class, e);
       return;
@@ -347,7 +359,7 @@ public class FavoritesPlugin extends EBPlugin {
     }
     
     public void characters(char[] ch,int offset,int length) {
-      // System.out.println("ƒeƒLƒXƒgƒf[ƒ^F" + new String(ch, offset, length));
+      // System.out.println("ãƒ†ã‚­ã‚¹ãƒˆãƒ‡ãƒ¼ã‚¿ï¼š" + new String(ch, offset, length));
     }
     
     public void endElement(String uri,String localName,String qName) {
