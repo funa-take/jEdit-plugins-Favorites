@@ -8,6 +8,16 @@
             favorites.FavoritesPlugin.add();
         </CODE>
     </ACTION>
+    <ACTION NAME="favorites.rename">
+        <CODE>
+            favorites.FavoritesPlugin.rename();
+        </CODE>
+    </ACTION>
+    <ACTION NAME="favorites.reload">
+        <CODE>
+            favorites.FavoritesPlugin.reload();
+        </CODE>
+    </ACTION>
     <ACTION NAME="favorites.delete">
         <CODE>
             favorites.FavoritesPlugin.delete();

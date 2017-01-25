@@ -70,11 +70,13 @@ public class FavoritesList extends JPanel implements EBComponent, DefaultFocusCo
           break;
           
         case KeyEvent.VK_DELETE:
-          delete();
+          // delete();
+          FavoritesPlugin.delete();
           e.consume();
           break;
         case KeyEvent.VK_F2:
-          rename();
+          // rename();
+          FavoritesPlugin.rename();
           e.consume();
           break;
         }
@@ -257,6 +259,20 @@ public class FavoritesList extends JPanel implements EBComponent, DefaultFocusCo
     }
   }
   
+  public void copyRoot(FileTreeNode root) {
+    Enumeration e = this.root.children();
+    while(e.hasMoreElements()) {
+      FileTreeNode node = (FileTreeNode)e.nextElement();
+      this.root.deleteNode(node);
+    }
+    
+    e = root.children();
+    while(e.hasMoreElements()) {
+      FileTreeNode node = (FileTreeNode)e.nextElement();
+      this.root.addNode(node);
+    }
+    reloadAll();
+  }
   
   public static FavoritesList getFavoritesList(View view) {
     return (FavoritesList)hash.get(view);
@@ -369,12 +385,13 @@ public class FavoritesList extends JPanel implements EBComponent, DefaultFocusCo
   
   public void rename(){
     FileTreeNode node = (FileTreeNode)tree.getLastSelectedPathComponent();
-    if (node.isLeaf() || node.equals(root)){
+    if (node.equals(root)){
       return;
     }
     
-    String gname = JOptionPane.showInputDialog(view, "Input group name", "Rename Group", JOptionPane.QUESTION_MESSAGE);
-    if (gname == null || gname.equals("")) {
+    // String gname = JOptionPane.showInputDialog(view, "Input group name", "Rename Group", JOptionPane.QUESTION_MESSAGE);
+    String newName = JOptionPane.showInputDialog(view, "Input New Name", node.getName());
+    if (newName == null || newName.equals("")) {
       return;
     }
     
@@ -383,7 +400,7 @@ public class FavoritesList extends JPanel implements EBComponent, DefaultFocusCo
       return;
     }
     
-    if (parent.renameGroup(node, gname)) {
+    if (parent.renameChild(node, newName)) {
       // treeModel.reload(parent);
       FavoritesList.reloadAll(parent);
     }

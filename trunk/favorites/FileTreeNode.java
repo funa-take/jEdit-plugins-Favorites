@@ -42,13 +42,12 @@ public class FileTreeNode implements TreeNode, Comparable, Cloneable {
   }
   
   
-  public boolean renameGroup(FileTreeNode node, String newname) {
-    if (node.isLeaf()) {
-      return false;
-    }
-    
-    if (children.containsKey(newname)) {
-      return false;
+  public boolean renameChild(FileTreeNode node, String newname) {
+    if (!node.isLeaf()) {
+      // グループの場合は同名は不可
+      if (children.containsKey(newname)) {
+        return false;
+      }
     }
     
     if (!children.containsKey(node.getKey())) {
@@ -267,11 +266,11 @@ public class FileTreeNode implements TreeNode, Comparable, Cloneable {
   
   
   /**
-  * FileTreeNode をコピーします。
-  * コピーは子配列の複製を参照します。
-  * 
-  *@return    VectorHash のコピー
-  */
+   * FileTreeNode をコピーします。
+   * コピーは子配列の複製を参照します。
+   * 
+   *@return    VectorHash のコピー
+   */
   @Override
   public Object clone() {
     FileTreeNode clone = null;

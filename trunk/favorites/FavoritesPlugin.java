@@ -79,6 +79,15 @@ public class FavoritesPlugin extends EBPlugin {
     return "# Recent Files";
   }
   
+  public static void reload() {
+    View view = jEdit.getActiveView();
+    FavoritesList cur = FavoritesList.getFavoritesList(view);
+    if (cur != null){
+      FileTreeNode root = createRoot();
+      cur.copyRoot(root);
+    }
+  }
+  
   public static void reloadHistory(View view){
     final FavoritesList cur = FavoritesList.getFavoritesList(view);
     if (cur == null){
@@ -135,6 +144,14 @@ public class FavoritesPlugin extends EBPlugin {
     }
   }
   
+  public static void rename(){
+    View view = jEdit.getActiveView();
+    FavoritesList cur = FavoritesList.getFavoritesList(view);
+    if (cur != null){
+      cur.rename();
+      saveXML();
+    }
+  }
   
   public static void delete(){
     View view = jEdit.getActiveView();
