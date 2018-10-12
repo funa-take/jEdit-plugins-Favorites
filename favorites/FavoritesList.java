@@ -370,7 +370,8 @@ public class FavoritesList extends JPanel implements EBComponent, DefaultFocusCo
     if (node.isLeaf()) {
       node = (FileTreeNode)node.getParent();
     }
-    Buffer[] buffers = jEdit.getBuffers();
+    // Buffer[] buffers = jEdit.getBuffers();
+    Buffer[] buffers = jEdit.getActiveView().getEditPane().getBufferSet().getAllBuffers();
     boolean result = false;
     for (int i = 0; i < buffers.length; i++) {
       result |= node.addNode(buffers[i]);
