@@ -235,12 +235,16 @@ public class FavoritesList extends JPanel implements EBComponent, DefaultFocusCo
   
   
   public void reload() {
+    int rows[] = tree.getSelectionRows();
     treeModel.reload();
+    tree.setSelectionRows(rows);
   }
   
   
   public void reload(FileTreeNode node){
+    int rows[] = tree.getSelectionRows();
     treeModel.reload(node);
+    tree.setSelectionRows(rows);
   }
   
   
