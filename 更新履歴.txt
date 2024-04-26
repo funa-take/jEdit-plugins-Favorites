@@ -1,3 +1,6 @@
+○2024/04/26
+  getSelectedNodesを追加
+  macroのCopy_Name.bshとCopy_Path.bshで選択されているパスを取得したかったため
 ○2019/04/09
   reload時に選択されていたrowsを再選択するように修正
   
