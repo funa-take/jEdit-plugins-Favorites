@@ -445,6 +445,25 @@ public class FavoritesList extends JPanel implements EBComponent, DefaultFocusCo
     }
   }
   
+  public java.util.List<FileTreeNode> getSelectedNodes() {
+    java.util.List<FileTreeNode> selectedNode = new ArrayList<FileTreeNode>();
+    
+    TreeSelectionModel selmodel = tree.getSelectionModel();
+    TreePath[] tp = selmodel.getSelectionPaths();
+    for (int i = 0; i < tp.length; i++) {
+      FileTreeNode node = (FileTreeNode)(tp[i].getPathComponent(tp[i].getPathCount() - 1));
+      selectedNode.add(node);
+    }
+    return selectedNode;
+  }
+  
+  public boolean hasFocus() {
+    if (tree != null) {
+      return tree.hasFocus();
+    }
+    return super.hasFocus();
+  }
+  
   
   public void focusOnDefaultComponent() {
     if (tree != null) {
